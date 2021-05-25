@@ -1,0 +1,80 @@
+%% Loas training data
+datos_train = loadDataTrain('partidos_train.xlsx');
+
+%% Train all the selected models
+[trainedModel_FineTree, validationRMSE_FineTree] = trainClassifier_FineTree(datos_train);
+[trainedModel_NaiveBayes, validationRMSE_NaiveBayes] = trainClassifier_NaiveBayes(datos_train);
+[trainedModel_SVM, validationRMSE_SVM] = trainClassifier_SVM(datos_train);
+[trainedModel_FineKNN, validationRMSE_FineKNN] = trainClassifier_FineKNN(datos_train);
+[trainedModel_Ensemble, validationRMSE_Ensemble] = trainClassifier_Ensemble(datos_train);
+
+%% Load known data and predict
+datos_predict_known = loadDataPredictKnown('partidos_prediction_known.xlsx');
+yfit_FineTree_known = trainedModel_FineTree.predictFcn(datos_predict_known);
+yfit_NaiveBayes_known = trainedModel_NaiveBayes.predictFcn(datos_predict_known);
+yfit_SVM_known = trainedModel_SVM.predictFcn(datos_predict_known);
+yfit_FineKNN_known = trainedModel_FineKNN.predictFcn(datos_predict_known);
+yfit_Ensemble_known = trainedModel_Ensemble.predictFcn(datos_predict_known);
+
+%% Check correct percentage
+results_known = [2;1;0;1;1;1;0;1;1;1;2;2;2;1;1;1;1;2];
+correct(1:5) = 0;
+for i=1:length(results_known)
+    if results_known(i) == yfit_FineTree_known(i)
+        correct(1) = correct(1) + 1;
+    end
+    if results_known(i) == yfit_NaiveBayes_known(i)
+        correct(2) = correct(2) + 1;
+    end
+    if results_known(i) == yfit_SVM_known(i)
+        correct(3) = correct(3) + 1;
+    end
+    if results_known(i) == yfit_FineKNN_known(i)
+        correct(4) = correct(4) + 1;
+    end
+    if results_known(i) == yfit_Ensemble_known(i)
+        correct(5) = correct(5) + 1;
+    end
+end
+
+percentage_correct_FineTree = correct(1)/length(yfit_FineTree_known)*100;
+percentage_correct_NaiveBayes = correct(2)/length(yfit_NaiveBayes_known)*100;
+percentage_correct_SVM = correct(3)/length(yfit_SVM_known)*100;
+percentage_correct_FineKNN = correct(4)/length(yfit_FineKNN_known)*100;
+percentage_correct_Ensemble = correct(5)/length(yfit_Ensemble_known)*100;
+
+fprintf("Porcentaje de aciertos de Fine Tree:\t %.2f%%\n", percentage_correct_FineTree);
+fprintf("Porcentaje de aciertos de Naive Bayes:\t %.2f%%\n", percentage_correct_NaiveBayes);
+fprintf("Porcentaje de aciertos de SVM:\t\t\t %.2f%%\n", percentage_correct_SVM);
+fprintf("Porcentaje de aciertos de Fine KNN:\t\t %.2f%%\n", percentage_correct_FineKNN);
+fprintf("Porcentaje de aciertos de Ensemble:\t\t %.2f%%\n", percentage_correct_Ensemble);
+
+%% Load data and predict the non played matches
+datos_predict = loadDataPredict('partidos_prediction.xlsx');
+yfit_FineTree = trainedModel_FineTree.predictFcn(datos_predict);
+yfit_NaiveBayes = trainedModel_NaiveBayes.predictFcn(datos_predict);
+yfit__SVM= trainedModel_SVM.predictFcn(datos_predict);
+yfit_FineKNN = trainedModel_FineKNN.predictFcn(datos_predict);
+yfit_Ensemble= trainedModel_Ensemble.predictFcn(datos_predict);
+
+fprintf("\nPREDICCIÓN CON FINE TREE\n");
+fprintf("España vs Hungría:\t\t\t %d\n", yfit_FineTree(1));
+fprintf("Croacia vs España:\t\t\t %d\n", yfit_FineTree(1));
+fprintf("Dinamarca vs Países Bajos:\t %d\n", yfit_FineTree(3));
+fprintf("Rep. Checa vs Polonia:\t\t %d\n", yfit_FineTree(4));
+fprintf("Francia vs Alemania:\t\t %d\n", yfit_FineTree(5));
+
+fprintf("\nPREDICCIÓN CON NAIVE BAYES\n");
+fprintf("España vs Hungría:\t\t\t %d\n", yfit_NaiveBayes(1));
+fprintf("Croacia vs España:\t\t\t %d\n", yfit_NaiveBayes(1));
+fprintf("Dinamarca vs Países Bajos:\t %d\n", yfit_NaiveBayes(3));
+fprintf("Rep. Checa vs Polonia:\t\t %d\n", yfit_NaiveBayes(4));
+fprintf("Francia vs Alemania:\t\t %d\n", yfit_NaiveBayes(5));
+
+fprintf("\nPREDICCIÓN CON NAIVE BAYES\n");
+fprintf("España vs Hungría:\t\t\t %d\n", yfit_NaiveBayes(1));
+fprintf("Croacia vs España:\t\t\t %d\n", yfit_NaiveBayes(1));
+fprintf("Dinamarca vs Países Bajos:\t %d\n", yfit_NaiveBayes(3));
+fprintf("Rep. Checa vs Polonia:\t\t %d\n", yfit_NaiveBayes(4));
+fprintf("Francia vs Alemania:\t\t %d\n", yfit_NaiveBayes(5));
+
